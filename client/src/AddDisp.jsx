@@ -26,6 +26,7 @@ function AddDisp() {
   const [billTo, setBillTo] = useState('');
   const [size, setSize] = useState('');
   const [salesId, setSalesId] = useState('');
+  const [total, setTotal] = useState(0);
 
   let itemIndex = 0;
 
@@ -213,6 +214,16 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
     setFullData(newData);
   }
 
+  // calculate the total of the items
+  useEffect(() => {
+    const calculateTotal = () => {
+      const totalBeforeVAT = fullData.reduce((acc, row) => acc + (parseFloat(row.beforeVat) || 0), 0);
+      setTotal(totalBeforeVAT);
+    };
+
+    calculateTotal();
+  }, [fullData]);
+
   return (
     <div className="add-item-container">
       <div className="top-section">
@@ -287,7 +298,12 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
             </tbody>
         </table>
       </div>
-    
+                      
+      {fullData && <div>
+        <p>Total Before VAT: {total}</p>
+        <p>VAT: {(total * 0.15).toFixed(2)}</p>
+        <p>Total including VAT: {(total * 1.15).toFixed(2)}</p>
+      </div>}
       <div className="add-btn-container">
         <button className="submit-button" onClick={(e) => addSingleItem(e)}>Add Item</button> 
 

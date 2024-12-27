@@ -1,13 +1,12 @@
 -- Use the mydb database
-USE mydb;
+USE sql8754029;
+
 
 -- Create Sales_Department table
 CREATE TABLE Sales_Department (
     department_id INT AUTO_INCREMENT PRIMARY KEY,
     department_name VARCHAR(100) UNIQUE NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    description TEXT
 );
 
 -- Create Sales_Representative table
