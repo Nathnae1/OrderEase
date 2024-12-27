@@ -69,9 +69,8 @@ function QuotationPrint() {
             <p className='company-name'>Z Corp LTD</p>
           </div>
           <div className="top-right-info">
-            <p>Ref No: {data[0].refNum}</p>
+            <p>Ref No: qu/{data[0].refNum}/{new Date(data[0].Date).getFullYear()}</p>
             <p>Date: {data[0].Date.split('T')[0]}</p>
-            <p>Name: {data[0].Name}</p>
           </div>
         </div>
         <div className="bill-to">
@@ -114,6 +113,10 @@ function QuotationPrint() {
             <p>VAT: {(total * 0.15).toFixed(2)}</p>
             <p>Total including VAT: {(total * 1.15).toFixed(2)}</p>
           </div>
+        </div>
+        <div className='contact-address'>
+          <p className='heading'>Contact Person</p>
+          <p>Name: {data[0].Name}</p>
         </div>
       </div>}
     </div>
