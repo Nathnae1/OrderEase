@@ -14,7 +14,7 @@ function DeliveryInstructionPrint() {
   const { diId } = useParams();
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [total, setTotal] = useState(0);
+  
   const [hasPrinted, setHasPrinted] = useState(false); // Add a flag to track printing
 
   // Clear the flag after the user enters the /print page:
@@ -38,13 +38,14 @@ function DeliveryInstructionPrint() {
   }, [diId]);
 
 
-  // Trigger print dialog only after total is calculated
+  // Trigger print dialog 
   useEffect(() => {
-    if (!isLoading && data.length > 0 && total > 0 && !hasPrinted) {
+    console.log(isLoading, data.length,hasPrinted);
+    if (!isLoading && data.length > 0 && !hasPrinted) {
       window.print();
       setHasPrinted(true); // Ensure print is triggered only once
     }
-  }, [isLoading, data, total, hasPrinted]);
+  }, [isLoading, data, hasPrinted]);
 
   if (isLoading) {
     return <p>Loading...</p>;
