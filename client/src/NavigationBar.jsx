@@ -27,13 +27,13 @@ const NavigationBar = () => {
             to="/add"
             className={({ isActive }) => (isActive ? 'active-link' : '')}
           >
-            Add Disposition
+            Add Quotation
           </NavLink>
           <NavLink
             to="/get_quotation"
             className={({ isActive }) => (isActive ? 'active-link' : '')}
           >
-            Quotation
+            Fetch Quotation
           </NavLink>
           <NavLink
             to="/fetch_so"

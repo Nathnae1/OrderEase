@@ -63,11 +63,16 @@ function QuotationPrint() {
   return (
     <div>
       {data.length > 0 && <div className="print-container">
-        <div></div>
-        <div className="top-right-info">
-          <p>Ref No: {data[0].refNum}</p>
-          <p>Date: {data[0].Date.split('T')[0]}</p>
-          <p>Name: {data[0].Name}</p>
+        <div className='top-section'>
+          <div className='quotation-style'>
+            <p className='qo-word'>Quotation</p>
+            <p className='company-name'>Z Corp LTD</p>
+          </div>
+          <div className="top-right-info">
+            <p>Ref No: {data[0].refNum}</p>
+            <p>Date: {data[0].Date.split('T')[0]}</p>
+            <p>Name: {data[0].Name}</p>
+          </div>
         </div>
         <div className="bill-to">
           <p>Bill To: {data[0].BillTo}</p>

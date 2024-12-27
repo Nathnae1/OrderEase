@@ -28,6 +28,44 @@
   }
 }
 
+.print-container {
+  margin: 100px;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.top-section{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  
+}
+
+.top-section .quotation-style{
+  font-family: Arial;
+  font-style: italic;
+  font-size: 60px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.top-section .company-name{
+  font-family: Arial;
+  font-style: italic;
+  font-size: 30px;
+  padding: 0px;
+  margin: 0px;
+
+}
+
+.top-section .top-right-info {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  margin-top: 20px;
+}
+
 .bottom-section {
   display: flex; /* Use flexbox for layout */
   justify-content: space-between; /* Add space between columns */
