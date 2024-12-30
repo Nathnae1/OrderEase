@@ -23,6 +23,7 @@ function QuotationPrint() {
     localStorage.removeItem('QuotationPrint'); // Clear the programmatic access flag
   }, []);
 
+  // fetch quotation data
   useEffect(() => {
     const fetchQuotation = async () => {
       try {
@@ -41,15 +42,16 @@ function QuotationPrint() {
   // Fetch contact address
   useEffect(() => {
     const fetchSalesPersonContact = async () => {
+      const salesId = data[0].sales_rep_id;
       try {
-        const response = await axios.get(`http://localhost:5000/sales/person/contact`);
+        const response = await axios.get(`http://localhost:5000/sales/person/contact/${salesId}`);
         setSalesContact(response.data);
       } catch (error) {
         console.error('Error fetching quotation:', error.message);
       } 
     };
     fetchSalesPersonContact();
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     const calculateTotal = () => {
@@ -64,11 +66,11 @@ function QuotationPrint() {
 
   // Trigger print dialog only after total is calculated
   useEffect(() => {
-    if (!isLoading && data.length > 0 && total > 0 && !hasPrinted) {
+    if (!isLoading && data.length > 0 && salesContact.length > 0 && total > 0 && !hasPrinted) {
       window.print();
       setHasPrinted(true); // Ensure print is triggered only once
     }
-  }, [isLoading, data, total, hasPrinted]);
+  }, [isLoading, data, total, hasPrinted, salesContact]);
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -87,6 +89,7 @@ function QuotationPrint() {
             <p>Date: {data[0].Date.split('T')[0]}</p>
           </div>
         </div>
+
         <div className="bill-to">
           <p>Bill To: {data[0].BillTo}</p>
         </div>

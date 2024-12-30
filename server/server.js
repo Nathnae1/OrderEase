@@ -748,9 +748,10 @@ app.get("/suggestions/sales/person",(req, res) => {
 })
 
 // Get Sales person contact info
-app.get("/sales/person/contact",(req, res) => {
-  const q = "SELECT * FROM sales_representative";
-  pool.query(q, (err, data) => {
+app.get("/sales/person/contact/:salesId",(req, res) => {
+  const idSales = req.params.salesId;
+  const q = "SELECT * FROM sales_representative WHERE sales_rep_id = ?";
+  pool.query(q, [idSales], (err, data) => {
     if(err) {
       console.error('Query error:', err);
       return res.status(500).json({error: 'Query error' });
