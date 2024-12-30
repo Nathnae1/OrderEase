@@ -56,7 +56,7 @@ function DeliveryInstructionPrint() {
   // Trigger print dialog 
   useEffect(() => {
     console.log(isLoading, data.length,hasPrinted);
-    if (!isLoading && data.length > 0 && !hasPrinted) {
+    if (!isLoading && data.length > 0 && salesContact.length > 0 && !hasPrinted) {
       window.print();
       setHasPrinted(true); // Ensure print is triggered only once
     }
