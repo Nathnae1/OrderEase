@@ -75,7 +75,7 @@ function DeliveryInstructionPrint() {
             <p className='company-name'>Z Corp LTD</p>
           </div>
           <div className="top-right-info">
-            <p>Ref No: di/{data[0].soRefNum}/{new Date(data[0].diDate).getFullYear()}</p>
+            <p>Ref No: di/{data[0].diRefNum}/{new Date(data[0].diDate).getFullYear()}</p>
             <p>Date: {data[0].diDate.split('T')[0]}</p>
           </div>
         </div>

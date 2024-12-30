@@ -32,7 +32,7 @@
 }
 
 .print-container {
-  margin: 100px;
+  margin: 0px;
   padding: 0;
   font-family: Arial, sans-serif;
 }
@@ -47,7 +47,7 @@
 .top-section .di-style{
   font-family: Arial;
   font-style: italic;
-  font-size: 60px;
+  font-size: 50px;
   padding: 0px;
   margin: 0px;
 }
