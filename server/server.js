@@ -747,6 +747,17 @@ app.get("/suggestions/sales/person",(req, res) => {
   })
 })
 
+// Get Sales person contact info
+app.get("/sales/person/contact",(req, res) => {
+  const q = "SELECT * FROM sales_representative";
+  pool.query(q, (err, data) => {
+    if(err) {
+      console.error('Query error:', err);
+      return res.status(500).json({error: 'Query error' });
+    }
+    return res.json(data);
+  })
+})
 
 // Add items to to quotation table
 app.post("/add", async (req, res) => {

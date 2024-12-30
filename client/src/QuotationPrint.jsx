@@ -13,6 +13,7 @@ function QuotationPrint() {
 
   const { id } = useParams();
   const [data, setData] = useState([]);
+  const [salesContact, setSalesContact] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [hasPrinted, setHasPrinted] = useState(false); // Add a flag to track printing
@@ -36,6 +37,19 @@ function QuotationPrint() {
     };
     fetchQuotation();
   }, [id]);
+
+  // Fetch contact address
+  useEffect(() => {
+    const fetchSalesPersonContact = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/sales/person/contact`);
+        setSalesContact(response.data);
+      } catch (error) {
+        console.error('Error fetching quotation:', error.message);
+      } 
+    };
+    fetchSalesPersonContact();
+  }, []);
 
   useEffect(() => {
     const calculateTotal = () => {
@@ -77,7 +91,7 @@ function QuotationPrint() {
           <p>Bill To: {data[0].BillTo}</p>
         </div>
 
-        <table>
+        <table className='data-table'>
           <thead>
             <tr>
               <th>No</th>
@@ -117,6 +131,12 @@ function QuotationPrint() {
         <div className='contact-address'>
           <p className='heading'>Contact Person</p>
           <p>Name: {data[0].Name}</p>
+          {salesContact.length > 0 &&
+           <div>
+              <p>Mobile: {salesContact[0].phone_number}</p>
+              <p>Email: {salesContact[0].email}</p>
+           </div>
+          }
         </div>
       </div>}
     </div>
