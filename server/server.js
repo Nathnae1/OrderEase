@@ -1185,8 +1185,7 @@ const authenticateToken = (req, res, next) => {
 /// Endpoint to handle login
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-  console.log('this is from react', email, password);
-
+  
   try {
     // Execute a query to retrieve the user by email
     const results = await pool.promise().query('SELECT * FROM users WHERE email = ?', [email]);
