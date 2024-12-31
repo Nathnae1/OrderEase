@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Suggest from './Suggest';
 import BillToSuggestions from './BillToSuggestions';
 import ColorSelectionInput from './ColorSelectionInput';
 import SalesInput from './SalesInput';
+import api from './api';
 
 // InputField component for rendering input fields
 function InputField({ label, type = 'text', value, onChange }) {
@@ -54,7 +54,7 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
       // Check the data before sending to server
       const dataToSend = fullData;
       // Use Axios to send a POST request
-      const response = await axios.post('http://localhost:5000/add', dataToSend);
+      const response = await api.post('/add', dataToSend);
 
       if (response.status === 200) {
         console.log('Data submitted successfully!');
@@ -84,7 +84,7 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
 
   // Get the last reference number of the quotation
   useEffect(() => {
-    fetch('http://localhost:5000/get_ref')
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/get_ref`)
       .then(response => response.json())
       .then(refData => {
         if (refData && refData[0]) {

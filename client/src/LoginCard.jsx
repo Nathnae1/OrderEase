@@ -1,10 +1,9 @@
-
-import axios from 'axios';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 import { useState } from "react";
-import './LoginStyle.css'
+import './LoginStyle.css';
+import api from './api';
 
 function LoginCard() {
   const [email, setEmail] = useState('');
@@ -17,7 +16,7 @@ function LoginCard() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/api/login', { email, password });
+      const response = await api.post('/api/login', { email, password });
       const { token } = response.data;
       localStorage.setItem('token', token);
       login();

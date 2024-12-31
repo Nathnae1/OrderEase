@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import api from './api';
 
 import './DeliveryInstructionPrintStyle.css'; // Add custom styles for printing
 
@@ -27,7 +28,7 @@ function DeliveryInstructionPrint() {
   useEffect(() => {
     const fetchDeliveryInstruction = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/get_delivery_instruction/${diId}?year=${year}`);
+        const response = await api.get(`/get_delivery_instruction/${diId}?year=${year}`);
         setData(response.data);
         console.log('This from print ', response.data);
       } catch (error) {
@@ -44,7 +45,7 @@ function DeliveryInstructionPrint() {
     const fetchSalesPersonContact = async () => {
       const salesId = data[0].sales_rep_id;
       try {
-        const response = await axios.get(`http://localhost:5000/sales/person/contact/${salesId}`);
+        const response = await api.get(`/sales/person/contact/${salesId}`);
         setSalesContact(response.data);
       } catch (error) {
         console.error('Error fetching quotation:', error.message);

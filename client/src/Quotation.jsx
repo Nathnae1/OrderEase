@@ -1,9 +1,9 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import EditAddItem from './EditAddItem'
 import './QuotationStyle.css'
 import BillToSuggestions from "./BillToSuggestions";
 import { useNavigate } from 'react-router-dom';
+import api from './api';
 
 function Quotation() {
   const [id, setId] = useState('');
@@ -51,7 +51,7 @@ function Quotation() {
       const year = selectedDate.getFullYear();
       const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
 
-      const response = await axios.get(`http://localhost:5000/get_quotation/${id}?year=${year}&month=${month}`);
+      const response = await api.get(`/get_quotation/${id}?year=${year}&month=${month}`);
       setData(response.data);
       setIsFailedReq(false);
       setIsFetched(true);
@@ -112,7 +112,7 @@ function Quotation() {
     
     console.log(updatedRow);
     try {
-      await axios.put(`http://localhost:5000/update_quotation/${id}?year=${year}&month=${month}`, updatedRow);
+      await api.put(`/update_quotation/${id}?year=${year}&month=${month}`, updatedRow);
       setEditingIndex(null);
     } catch (error) {
       console.error('Error saving data:', error.message);
@@ -125,7 +125,7 @@ function Quotation() {
     const month = String(itemDate.getMonth() + 1).padStart(2, '0');
     
     try {
-      await axios.delete(`http://localhost:5000/delete_quotation/${id}?year=${year}&month=${month}`);
+      await api.delete(`/delete_quotation/${id}?year=${year}&month=${month}`);
       setData(data.filter(item => item.id !== id));
     } catch (error) {
       console.error('Error deleting data:', error.message);
@@ -170,7 +170,7 @@ function Quotation() {
     
     console.log('This handle bill to --- ', updatedBillTo);
     try {
-      await axios.put(`http://localhost:5000/update_quotation/billto/${ref}?year=${year}&month=${month}`, updatedBillTo);
+      await api.put(`/update_quotation/billto/${ref}?year=${year}&month=${month}`, updatedBillTo);
       
     } catch (error) {
       console.error('Error saving data:', error.message);
@@ -184,7 +184,7 @@ function Quotation() {
       const year = selectedDate.getFullYear();
       const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
 
-      const response = await axios.get(`http://localhost:5000/get_quotation/${id}?year=${year}&month=${month}`);
+      const response = await api.get(`/get_quotation/${id}?year=${year}&month=${month}`);
       setData(response.data);
       setIsFailedReq(false);
       setIsFetched(true);

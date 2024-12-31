@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Suggest from './Suggest';
-import axios from 'axios';
+import api from './api';
 
 function EditAddItem({noOfItems, identityData, sendData, setSendData}) {
   // State variables for each input field
@@ -115,7 +115,7 @@ function EditAddItem({noOfItems, identityData, sendData, setSendData}) {
         // Check the data before sending to server
         const dataToSend = AddData;
         // Use Axios to send a POST request
-        const response = await axios.post(`http://localhost:5000/add/edit${queryString}`, dataToSend);
+        const response = await api.post(`/add/edit${queryString}`, dataToSend);
   
         if (response.status === 200) {
           console.log('Data submitted successfully!');

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import api from './api';
 
 function SalesOrderCreate() {
   const location = useLocation();
@@ -56,11 +56,11 @@ function SalesOrderCreate() {
       setIsLoading(true);
   
       try {
-        let url = `http://localhost:5000/get_quotation_for_so/${qoToSoRef}?year=${year}&month=${month}`;
+        let url = `${import.meta.env.VITE_API_BASE_URL}/get_quotation_for_so/${qoToSoRef}?year=${year}&month=${month}`;
         if (selectedRows) {
           url += `&filterIds=${selectedRows}`;
         }
-        const response = await axios.get(url);
+        const response = await api.get(url);
         setQuotationData(response.data);
         console.log(response.data);
         console.log(quotationData);
@@ -132,7 +132,7 @@ function SalesOrderCreate() {
       // Check the data before sending to server
       const dataToSend = quotationData;
       // Use Axios to send a POST request
-      const response = await axios.post('http://localhost:5000/send_so_to_db', dataToSend);
+      const response = await api.post('/send_so_to_db', dataToSend);
 
       if (response.status === 201) {
         setSoRefNumber(response.data.soId)
@@ -147,7 +147,7 @@ function SalesOrderCreate() {
   };
 
   const handlePrint = () => {
-    console.log('Pring option clicked');
+    console.log('Print option clicked');
   }
 
   const handleEdit = () => {

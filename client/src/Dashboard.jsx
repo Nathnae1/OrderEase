@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
+import api from './api';
 
 const Dashboard = () => {
   const [message, setMessage] = useState('');
@@ -12,7 +12,7 @@ const Dashboard = () => {
     if (!isAuthenticated) {
       navigate('/login');
     } else {
-      axios.get('http://localhost:5000/api/protected', {
+      api.get('/api/protected', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

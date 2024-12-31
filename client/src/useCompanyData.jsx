@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 
 //shared across all instances of the useCableData hook in that module
 // Act as a shared global variable
@@ -17,7 +17,7 @@ export const useCompanyData = () => {
     } else {
       const fetchbillToInfo = async () => {
         try {
-          const response = await axios.get('http://localhost:5000/suggestions/billto');
+          const response = await api.get('/suggestions/billto');
           cachedData = response.data;
           setbillToInfo(cachedData);
         } catch (err) {
