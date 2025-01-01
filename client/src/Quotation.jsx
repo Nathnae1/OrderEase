@@ -52,6 +52,7 @@ function Quotation() {
       const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
 
       const response = await api.get(`/get_quotation/${id}?year=${year}&month=${month}`);
+      console.log('this is from fetch', response.data);
       setData(response.data);
       setIsFailedReq(false);
       setIsFetched(true);

@@ -1,4 +1,5 @@
 const express = require('express');
+const dotenv = require('dotenv');
 
 // for interacting with the mysql db
 const mysql = require('mysql2')
@@ -28,16 +29,25 @@ app.use(bodyParser.json());
 // Parse JSON bodies
 app.use(express.json());
 
-const port = 5000;
+// Load environment variables from .env file
+dotenv.config();
+
+const port = process.env.PORT;
 
 // create a connection pool - not single connectin
 const pool = mysql.createPool({
-  host: "localhost",
-  connectionLimit: 10,
-  user: "root",
-  password: "password",
-  database: "mydb"
-})
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  connectionLimit: Number(process.env.DB_CONNECTION_LIMIT),
+  dateStrings: true  // This ensures that date fields are returned as strings
+});
+
+// Use the JWT secret from environment variables
+const JWT_SECRET = process.env.JWT_SECRET;
+// Refresh Secret
+const REFRESH_SECRET = process.env.REFRESH_SECRET
 
 // Middleware to handle conncetion errors
 
@@ -86,6 +96,7 @@ app.get("/get_quotation/:id", (req, res) => {
 
   const q = `SELECT * FROM ${escapedTableName} WHERE refNum= ?`;
   pool.query(q,[id], (err, data) => {
+    console.log('backedn', data);
     if(err) {
       console.error('Query error:', err);
       return res.status(500).json({error: 'Query error' });
@@ -1162,10 +1173,6 @@ app.post("/api/add_contact", (req, res) => {
   });
 });
 
-// Login code
-//Use an environment variable in production
-const JWT_SECRET = 'your_secret_key_1234';
-
 // Middleware to verify token
 // authenticateToken middleware verifies the JWT token sent in the Authorization header
 
@@ -1189,10 +1196,11 @@ app.post('/api/login', async (req, res) => {
   try {
     // Execute a query to retrieve the user by email
     const results = await pool.promise().query('SELECT * FROM users WHERE email = ?', [email]);
-    console.log('this is results', results);
-
+    
     const singleResult = results[0];
     const user = singleResult[0];
+
+    console.log('this is sr', singleResult, 'and this is user', user);
 
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });

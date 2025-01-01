@@ -53,6 +53,7 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
     try {
       // Check the data before sending to server
       const dataToSend = fullData;
+      console.log('full to db from add', fullData);
       // Use Axios to send a POST request
       const response = await api.post('/add', dataToSend);
 

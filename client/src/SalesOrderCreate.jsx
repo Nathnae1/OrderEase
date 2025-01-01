@@ -36,8 +36,10 @@ function SalesOrderCreate() {
       if (!isNaN(date.getTime())) {
         // Extract the year and month
         const extractedYear = date.getFullYear();
-        const extractedMonth = date.getMonth() + 1; // getMonth() is zero-based, so we add 1
-
+        // Add leading zero if month is less than 10 
+        // getMonth() is zero-based, so we add 1
+        const extractedMonth = (date.getMonth() + 1).toString().padStart(2, '0'); 
+        
         setYear(extractedYear);
         setMonth(extractedMonth);
       } else {
