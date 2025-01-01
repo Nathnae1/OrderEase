@@ -15,6 +15,7 @@ const bcrypt = require('bcryptjs')
 // for parsing JSON bodies
 const bodyParser = require('body-parser');
 const { error, log } = require('console');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
@@ -1173,6 +1174,8 @@ app.post("/api/add_contact", (req, res) => {
   });
 });
 
+
+
 // Middleware to verify token
 // authenticateToken middleware verifies the JWT token sent in the Authorization header
 
@@ -1199,8 +1202,6 @@ app.post('/api/login', async (req, res) => {
     
     const singleResult = results[0];
     const user = singleResult[0];
-
-    console.log('this is sr', singleResult, 'and this is user', user);
 
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
