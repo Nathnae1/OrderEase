@@ -46,9 +46,6 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
 
    // Function to handle form submission
    const handleClick = async (e) => {
-   
-
-    console.log(fullData);
 
     try {
       // Check the data before sending to server
@@ -58,21 +55,19 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
       const response = await api.post('/add', dataToSend);
 
       if (response.status === 200) {
-        console.log('Data submitted successfully!');
         setIsSubmitted(true);
+        // Extract idRef from the response
+        const { idRef } = response.data;
+
+        // Display the idRef in a top popup
+        window.alert(`Quotation created successfully with ID Reference: ${idRef}`);
+
         // Set a timeout to hide the success message after 10 seconds
         setTimeout(() => {
           setIsSubmitted(false);
         }, 2000);
 
-        // reset the form fields
-        let tempRef = ref;
-        setRef('');
-        setRef(++tempRef);
-        // setName('');
-        // setDate('');
-        // setBillTo('');
-        setFullData([{ ref: ref, salesRepId: '', name: '', date: '', billTo: '', size: size, description: '', quantity: '', colour: 'Black', packing: 'DRUM', unitPrice: '', beforeVat: '' }]);
+        setFullData([{ ref: '', salesRepId: '', name: '', date: '', billTo: '', size: size, description: '', quantity: '', colour: 'Black', packing: 'DRUM', unitPrice: '', beforeVat: '' }]);
         itemIndex = 0;
 
       } else {
@@ -83,20 +78,8 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
     }
   };
 
-  // Get the last reference number of the quotation
+  // Set the date
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/get_ref`)
-      .then(response => response.json())
-      .then(refData => {
-        if (refData && refData[0]) {
-          setRef(++refData[0].refNum);
-          console.log(refData[0].refNum);
-        } else {
-          setRef(1);
-          console.log('Setting refNum to 1');
-        }
-         });
-
         // Function to format the date as YYYY-MM-DD
         const formatDate = (date) => {
           const year = date.getFullYear();
@@ -228,12 +211,11 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
   return (
     <div className="add-item-container">
       <div className="top-section">
-        {isSubmitted && <div className="success-message"> Data submitted successfully! </div>}
+        {/* {isSubmitted && <div className="success-message"> Data submitted successfully! </div>} */}
       </div>
       
       <div className="add-identity">
         <div className="add-serial">
-          <InputField label="Ref" type="text" value={ref} onChange={(e) => setRef(e.target.value)} />
           <InputField label="Date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           <SalesInput onSalesInfo={handleSalesInfo}/>
         </div>
