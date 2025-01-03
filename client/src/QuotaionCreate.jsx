@@ -18,7 +18,7 @@ function InputField({ label, type = 'text', value, onChange }) {
 
 
 // Add component for the form
-function AddDisp() {
+function QuotationCreate() {
   // State variables for each input field
   const [ref, setRef] = useState('');
   const [name, setName] = useState('');
@@ -52,7 +52,7 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
       const dataToSend = fullData;
       console.log('full to db from add', fullData);
       // Use Axios to send a POST request
-      const response = await api.post('/add', dataToSend);
+      const response = await api.post('/create/quotation', dataToSend);
 
       if (response.status === 200) {
         setIsSubmitted(true);
@@ -298,4 +298,4 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
   );
 }
 
-export default AddDisp;
+export default QuotationCreate;

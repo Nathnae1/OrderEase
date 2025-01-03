@@ -753,7 +753,7 @@ async function getLastRef() {
 
 
 // Add items to to quotation table
-app.post("/add", async (req, res) => {
+app.post("/create/quotation", async (req, res) => {
 
   try {
      // Fetch the last reference number

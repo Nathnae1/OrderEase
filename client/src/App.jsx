@@ -7,7 +7,7 @@ import NavigationBar from './NavigationBar';
 import ProtectedRoute from './ProtectedRoute';
 
 import Quotation from './Quotation'
-import AddDisp from './AddDisp'
+import QuotationCreate from './QuotaionCreate';
 import Home from './Home'
 import SalesOrderCreate from './SalesOrderCreate';
 import SalesOrderFetch from './SalesOrderFetch';
@@ -40,7 +40,7 @@ function App() {
             <Route path="/get_quotation" element={<ProtectedRoute element={<Quotation />} />} />
             <Route path="/quotation/print/:id" element={<ProtectedRoute element={<QuotationPrint />} printProgrammaticAccess={true} />} />
 
-            <Route path="/add" element={<ProtectedRoute element={<AddDisp />} />} />
+            <Route path="/add" element={<ProtectedRoute element={<QuotationCreate />} />} />
 
             <Route path="/create_so" element={<ProtectedRoute element={<SalesOrderCreate />} programmaticAccess={true} />} />
             <Route path="/fetch_so" element={<ProtectedRoute element={<SalesOrderFetch />} />} />
