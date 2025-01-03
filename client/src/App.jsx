@@ -40,7 +40,7 @@ function App() {
             <Route path="/get_quotation" element={<ProtectedRoute element={<Quotation />} />} />
             <Route path="/quotation/print/:id" element={<ProtectedRoute element={<QuotationPrint />} printProgrammaticAccess={true} />} />
 
-            <Route path="/add" element={<ProtectedRoute element={<QuotationCreate />} />} />
+            <Route path="/create_quotation" element={<ProtectedRoute element={<QuotationCreate />} />} />
 
             <Route path="/create_so" element={<ProtectedRoute element={<SalesOrderCreate />} programmaticAccess={true} />} />
             <Route path="/fetch_so" element={<ProtectedRoute element={<SalesOrderFetch />} />} />

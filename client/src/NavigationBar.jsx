@@ -24,10 +24,10 @@ const NavigationBar = () => {
             Dashboard
           </NavLink>
           <NavLink
-            to="/add"
+            to="/create_quotation"
             className={({ isActive }) => (isActive ? 'active-link' : '')}
           >
-            Add Quotation
+            Create Quotation
           </NavLink>
           <NavLink
             to="/get_quotation"
