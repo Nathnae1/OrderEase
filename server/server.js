@@ -743,7 +743,7 @@ async function getLastRef() {
       const [refResult] = await pool.promise().query(selectRefQuery);
 
       // Return the last refNum or 0 if none exists
-      return refResult.length > 0 ? (++refResult[0].refNum) : 0;
+      return refResult.length > 0 ? (++refResult[0].refNum) : 1;
 
   } catch (err) {
       console.error('Error in getLastRef:', err);
