@@ -122,8 +122,29 @@ app.get("/get_quotation_for_so/:qoToSoRef", async (req, res) => {
     return res.status(400).json({ error: 'Missing required parameters' });
   }
 
-  const tableName = generateTableName(year, month);
+  // checking so table
+  const soTableName = generateSoTableName(year);
+  const escapedSoTableName = mysql.escapeId(soTableName);
 
+  const soQ = `SELECT * FROM ${escapedSoTableName} WHERE qoRefNum = ?;`;
+
+  try {
+    const [soRows] = await pool.promise().query(soQ, [ref]);
+    
+    if (soRows.length > 0) {
+      // If a record exists, return the associated SO number
+      const soNum = soRows[0].soRefNum;
+      return res.status(200).json({ message: 'Record exists', soNum });
+    }
+  
+    // If no record exists, pass to the next operation
+    next();
+  } catch (err) {
+    console.error('Database query error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+
+  const tableName = generateTableName(year, month);
   // Escape table name for safety
   const escapedTableName = mysql.escapeId(tableName);
 

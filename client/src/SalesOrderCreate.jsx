@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from './api';
+import { useNavigate } from 'react-router-dom';
 
 function SalesOrderCreate() {
   const location = useLocation();
@@ -21,6 +22,9 @@ function SalesOrderCreate() {
 
   const [soRefNumber, setSoRefNumber] = useState(null);
   const [soIsSubmitted, setSoIsSubmitted] = useState(false); 
+
+  // Define the navigate function
+  const navigate = useNavigate();
 
   // Clear the flag after the user enters the /create_so page:
   useEffect(() => {
@@ -50,7 +54,7 @@ function SalesOrderCreate() {
 
   useEffect(() => {
     const fetchQuotationData = async () => {
-      console.log('gettig data', qoToSoRef, year, month);
+      console.log('Getting data', qoToSoRef, year, month);
       if (!qoToSoRef || !year || !month) {
         return;
       }
@@ -62,10 +66,19 @@ function SalesOrderCreate() {
         if (selectedRows) {
           url += `&filterIds=${selectedRows}`;
         }
+  
         const response = await api.get(url);
-        setQuotationData(response.data);
-        console.log(response.data);
-        console.log(quotationData);
+  
+        if (response.data.message === 'Record exists' && response.data.soNum) {
+          // Display the record exists message with the SO number
+          window.alert(`Record exists with SO number: ${response.data.soNum}`);
+          navigate(`/fetch_so`);
+        } else {
+          // Set the fetched quotation data
+          setQuotationData(response.data);
+          console.log(response.data);
+          console.log(quotationData);
+        }
       } catch (error) {
         setError(error.message);
       } finally {
@@ -75,6 +88,7 @@ function SalesOrderCreate() {
   
     fetchQuotationData();
   }, [qoToSoRef, year, month, selectedRows]);
+  
 
   // hook to calculate the total
   useEffect(() => {
