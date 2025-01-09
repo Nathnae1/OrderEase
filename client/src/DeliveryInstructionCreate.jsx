@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import api from './api';
+import { useNavigate } from 'react-router-dom';
 
 function DeliveryInstructionCreate() {
   const location = useLocation();
@@ -24,6 +25,14 @@ function DeliveryInstructionCreate() {
   const [diRefNumber, setSoRefNumber] = useState(null);
   const [diSubmitted, setDiSubmitted] = useState(false); 
 
+  // Define the navigate function
+  const navigate = useNavigate();
+
+  //set delivered items data
+  const [deliveredData, setDeliveredData] = useState([]);
+
+  //set undelivered items data
+  const [unDeliveredData, setunDeliveredData] = useState([]);
 
   // Clear the flag after the user enters the /create_so page:
   useEffect(() => {
@@ -47,8 +56,19 @@ function DeliveryInstructionCreate() {
           url += `&filterIds=${selectedRows}`;
         }
         const response = await axios.get(url);
-        setSoData(response.data);
-       
+        if (response.data.message === 'Delivery record exists') {
+          // Display the record exists message with the SO number
+          // navigate(`/fetch_di`);
+          console.log(response.data.deliveredItems);
+          setDeliveredData(response.data.deliveredItems);
+          setunDeliveredData(response.data.undeliveredItems);
+          window.alert(`Record exists with DI number: ${response.data.diNum}, ${response.data.deliveryStatus}`);
+        } else {
+          // Set the fetched quotation data
+          setSoData(response.data);
+          console.log(response.data);
+          console.log(quotationData);
+        }  
       } catch (error) {
         setError(error.message);
       } finally {
@@ -111,6 +131,19 @@ function DeliveryInstructionCreate() {
 
   return (
     <div>
+      {deliveredData && (
+            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+              <h1>Delivered Data</h1>
+              {JSON.stringify(deliveredData, null, 2)}
+            </pre>
+          )}
+      {unDeliveredData && (
+            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+              <h1>unDelivered Data</h1>
+              {JSON.stringify(unDeliveredData, null, 2)}
+            </pre>
+          )}
+
       {!diSubmitted && <div className='di-on-creation'>
         <div>
           <h1>This is Create Delivery Instruction for SO {soToDi} and year {year}</h1>

@@ -71,8 +71,8 @@ function SalesOrderCreate() {
   
         if (response.data.message === 'Record exists' && response.data.soNum) {
           // Display the record exists message with the SO number
-          window.alert(`Record exists with SO number: ${response.data.soNum}`);
           navigate(`/fetch_so`);
+          window.alert(`Record exists with SO number: ${response.data.soNum}`);
         } else {
           // Set the fetched quotation data
           setQuotationData(response.data);

@@ -235,7 +235,7 @@ app.get("/get_sales_order/:soId", (req, res) => {
 })
 
 // Sales Order route to fetch data for di
-app.get("/get_so_for_di/:soToDi", (req, res) => {
+app.get("/get_so_for_di/:soToDi",async (req, res) => {
   const soId = req.params.soToDi;
   const year = req.query.year;
   const idFilter = req.query.filterIds;
@@ -246,6 +246,34 @@ app.get("/get_so_for_di/:soToDi", (req, res) => {
   // Validate input
   if (!soId || !year) {
     return res.status(400).json({ error: 'Missing required parameters' });
+  }
+
+  // checking di table
+  const diTableName = generateDiTableName(year);
+  const escapedDiTableName = mysql.escapeId(diTableName);
+
+  const diQ = `SELECT * FROM ${escapedDiTableName} WHERE soRefNum = ?;`;
+
+  try {
+    const [diRows] = await pool.promise().query(diQ, [soId]);
+
+    if (diRows.length > 0) {
+      // Separate items by delivery status
+      const deliveredItems = diRows.filter(item => item.deliveredQty >= item.orderedQty);
+      const undeliveredItems = diRows.filter(item => item.deliveredQty < item.orderedQty);
+
+      return res.status(200).json({
+        message: 'Delivery record exists',
+        diNum: diRows[0].diRefNum,
+        deliveredItems,
+        undeliveredItems,
+        deliveredCount: deliveredItems.length,
+        undeliveredCount: undeliveredItems.length
+      });
+    }
+  }  catch (err) {
+    console.error('Database query error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 
   const tableName = generateSoTableName(year);
