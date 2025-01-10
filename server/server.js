@@ -108,78 +108,73 @@ app.get("/get_quotation/:id", (req, res) => {
 })
 
 // Quotation route to fetch data to make Sales Order
-app.get("/get_quotation_for_so/:qoToSoRef", async (req, res) => {
+app.get("/get_quotation_for_so/:qoToSoRef", async (req, res, next) => {
   const ref = req.params.qoToSoRef;
   const year = req.query.year;
   const month = req.query.month;
   const idFilter = req.query.filterIds;
- 
+
   // Convert the ids string back to an array
   const selectedIds = idFilter ? idFilter.split(',').map(id => parseInt(id)) : [];
-  
+
   // Validate input
   if (!ref || !year || !month) {
     return res.status(400).json({ error: 'Missing required parameters' });
   }
 
-  // checking so table
+  // Checking SO table
   const soTableName = generateSoTableName(year);
   const escapedSoTableName = mysql.escapeId(soTableName);
-
   const soQ = `SELECT * FROM ${escapedSoTableName} WHERE qoRefNum = ?;`;
 
   try {
     const [soRows] = await pool.promise().query(soQ, [ref]);
-    
+
     if (soRows.length > 0) {
       // If a record exists, return the associated SO number
       const soNum = soRows[0].soRefNum;
       return res.status(200).json({ message: 'Record exists', soNum });
     }
-  
-    // If no record exists, pass to the next operation
-    next();
+
+    // If no record exists, proceed to the next operation
+    // Continue to the next part of the logic to fetch quotation data
+    const tableName = generateTableName(year, month);
+    const escapedTableName = mysql.escapeId(tableName);
+
+    const q = `SELECT * FROM ${escapedTableName} WHERE refNum = ?;`;
+    const q2 = "SELECT * FROM items";
+    const q3 = `SELECT tin FROM companies WHERE company_name = ?;`;
+
+    // Fetch quotation data and items
+    try {
+      const [dataItem] = await pool.promise().query(q2);
+      const [dataQuotation] = await pool.promise().query(q, [ref]);
+
+      // Set the company name
+      let companyName = dataQuotation[0].BillTo;
+
+      // Fetch the TIN number of the company
+      const [dataTIN] = await pool.promise().query(q3, [companyName]);
+
+      // If selectedIds is provided, filter the data
+      let filteredData = dataQuotation;
+      if (selectedIds.length > 0) {
+        filteredData = dataQuotation.filter((quotation) => selectedIds.includes(quotation.id));
+      }
+
+      // Return the filtered or full data
+      return res.json(dataForSo(filteredData, dataItem, dataTIN));
+    } catch (err) {
+      console.error('Query error:', err);
+      return res.status(500).json({ error: 'Query error' });
+    }
+
   } catch (err) {
     console.error('Database query error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
-
-  const tableName = generateTableName(year, month);
-  // Escape table name for safety
-  const escapedTableName = mysql.escapeId(tableName);
-
-  const q = `SELECT * FROM ${escapedTableName} WHERE refNum = ?;`;
-  const q2 = "SELECT * FROM items";
-  const q3 = `SELECT tin FROM companies WHERE company_name = ?;`;
-
-  try {
-    // Fetch items data for volt, itemDesc for so
-    const [dataItem] = await pool.promise().query(q2);
-
-    // Fetch quotation data
-    // await calls to ensure they are executed sequentially in a synchronous manner.
-    const [dataQuotation] = await pool.promise().query(q, [ref]);
-
-    // Set the company name
-    let companyName = dataQuotation[0].BillTo;
-
-    // Fetch the TIN number of the company
-    const [dataTIN] = await pool.promise().query(q3, [companyName]);
-
-    // If selectedIds is provided, filter the data
-    let filteredData = dataQuotation;
-    if (selectedIds.length > 0) {
-      filteredData = dataQuotation.filter((quotation) => selectedIds.includes(quotation.id));
-    }
-   
-    // Return the filtered or full data
-    return res.json(dataForSo(filteredData, dataItem, dataTIN));
-
-  } catch (err) {
-    console.error('Query error:', err);
-    return res.status(500).json({ error: 'Query error' });
-  }
 });
+
 
 const dataForSo = (qoData, itemsData, companyTIN) => {
   
@@ -235,11 +230,11 @@ app.get("/get_sales_order/:soId", (req, res) => {
 })
 
 // Sales Order route to fetch data for di
-app.get("/get_so_for_di/:soToDi",async (req, res) => {
+app.get("/get_so_for_di/:soToDi", async (req, res) => {
   const soId = req.params.soToDi;
   const year = req.query.year;
   const idFilter = req.query.filterIds;
- 
+
   // Convert the ids string back to an array
   const selectedIds = idFilter ? idFilter.split(',').map(id => parseInt(id)) : [];
 
@@ -248,55 +243,52 @@ app.get("/get_so_for_di/:soToDi",async (req, res) => {
     return res.status(400).json({ error: 'Missing required parameters' });
   }
 
-  // checking di table
+  // Fetch DI data
   const diTableName = generateDiTableName(year);
   const escapedDiTableName = mysql.escapeId(diTableName);
 
   const diQ = `SELECT * FROM ${escapedDiTableName} WHERE soRefNum = ?;`;
+  const soTableName = generateSoTableName(year);
+  const escapedSoTableName = mysql.escapeId(soTableName);
+
+  const soQ = `SELECT * FROM ${escapedSoTableName} WHERE soRefNum = ?;`;
 
   try {
     const [diRows] = await pool.promise().query(diQ, [soId]);
+    const [soRows] = await pool.promise().query(soQ, [soId]);
 
-    if (diRows.length > 0) {
-      // Separate items by delivery status
-      const deliveredItems = diRows.filter(item => item.deliveredQty >= item.orderedQty);
-      const undeliveredItems = diRows.filter(item => item.deliveredQty < item.orderedQty);
-
-      return res.status(200).json({
-        message: 'Delivery record exists',
-        diNum: diRows[0].diRefNum,
-        deliveredItems,
-        undeliveredItems,
-        deliveredCount: deliveredItems.length,
-        undeliveredCount: undeliveredItems.length
-      });
+    if (soRows.length === 0) {
+      return res.status(404).json({ message: "Sales order not found" });
     }
-  }  catch (err) {
+
+    // Combine sales order data with delivery data
+    const combinedData = soRows.map(soItem => {
+      const diItem = diRows.find(di => di.soId === soItem.id);
+      const deliveredQty = diItem ? diItem.deliveredQty : 0;
+
+      return {
+        ...soItem,
+        deliveredQty,
+        status: deliveredQty >= soItem.QTY ? 'delivered' : 'undelivered',
+      };
+    });
+
+    // Filter delivered and undelivered items
+    const deliveredItems = combinedData.filter(item => item.status === 'delivered');
+    const undeliveredItems = combinedData.filter(item => item.status === 'undelivered');
+
+    return res.status(200).json({
+      message: 'Sales order data retrieved',
+      deliveredItems,
+      undeliveredItems,
+      deliveredCount: deliveredItems.length,
+      undeliveredCount: undeliveredItems.length,
+    });
+  } catch (err) {
     console.error('Database query error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
-
-  const tableName = generateSoTableName(year);
-
-  // Escape table name for safety
-  const escapedTableName = mysql.escapeId(tableName);
-
-  const q = `SELECT * FROM ${escapedTableName} WHERE soRefNum= ?`;
-  pool.query(q,[soId], (err, data) => {
-    if(err) {
-      console.error('Query error:', err);
-      return res.status(500).json({error: 'Query error' });
-    }
-    // If selectedIds is provided, filter the data
-    let filteredData = data;
-    if (selectedIds.length > 0) {
-      filteredData = data.filter((item) => selectedIds.includes(item.id));
-    }
-    return res.json(dataForDi(filteredData));
-  })
-
-})
-
+});
 const dataForDi = (filteredData) => {
   
   const diData = filteredData.map(soItem => {
@@ -992,8 +984,10 @@ app.post("/send_so_to_db", async (req, res) => {
       // Table exists, get the last reference number (id)
       const selectRefQuery = `SELECT soRefNum FROM ${tableName} ORDER BY id DESC LIMIT 1`;
       const result = await queryPromise(selectRefQuery);
-      if(result) {
+      if(result && result[0]) {
         soRefNumber = result[0].soRefNum + 1; // Increment the id to get the next reference number
+      } else {
+        soRefNumber = 1;
       }
     }
 

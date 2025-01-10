@@ -56,13 +56,13 @@ function DeliveryInstructionCreate() {
           url += `&filterIds=${selectedRows}`;
         }
         const response = await axios.get(url);
-        if (response.data.message === 'Delivery record exists') {
+        if (response.data.message === 'Sales order data retrieved') {
           // Display the record exists message with the SO number
           // navigate(`/fetch_di`);
           console.log(response.data.deliveredItems);
           setDeliveredData(response.data.deliveredItems);
           setunDeliveredData(response.data.undeliveredItems);
-          window.alert(`Record exists with DI number: ${response.data.diNum}, ${response.data.deliveryStatus}`);
+          window.alert(`Record exists with DI number: ${response.data.deliveredCount}, ${response.data.deliveryStatus}`);
         } else {
           // Set the fetched quotation data
           setSoData(response.data);
