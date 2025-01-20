@@ -254,24 +254,41 @@ app.get("/get_so_for_di/:soToDi", async (req, res) => {
   const soQ = `SELECT * FROM ${escapedSoTableName} WHERE soRefNum = ?;`;
 
   try {
-    const [diRows] = await pool.promise().query(diQ, [soId]);
-    const [soRows] = await pool.promise().query(soQ, [soId]);
+    let diRows = [];
+    try {
+      [diRows] = await pool.promise().query(diQ, [soId]);
+    } catch (diError) {
+      // Handle case where the DI table does not exist
+      if (diError.code === 'ER_NO_SUCH_TABLE') {
+        console.warn(`DI table "${diTableName}" does not exist for year: ${year}`);
+      } else {
+        throw diError; // Re-throw if it's a different error
+      }
+    }
+
+    let [soRows] = await pool.promise().query(soQ, [soId]);
+
+    if(selectedIds.length > 0) {
+      soRows = soRows.filter((item) => selectedIds.includes(item.id));
+    }
 
     if (soRows.length === 0) {
       return res.status(404).json({ message: "Sales order not found" });
     }
 
     // Combine sales order data with delivery data
-    const combinedData = soRows.map(soItem => {
-      const diItem = diRows.find(di => di.soId === soItem.id);
-      const deliveredQty = diItem ? diItem.deliveredQty : 0;
+    if(diRows) {
+      const combinedData = soRows.map(soItem => {
+        const diItem = diRows.find(di => di.soId === soItem.id);
+        const deliveredQty = diItem ? diItem.deliveredQty : 0;
 
-      return {
-        ...soItem,
-        deliveredQty,
-        status: deliveredQty >= soItem.QTY ? 'delivered' : 'undelivered',
-      };
-    });
+        return {
+          ...soItem,
+          deliveredQty,
+          status: deliveredQty >= soItem.QTY ? 'delivered' : 'undelivered',
+        };
+      });
+    
 
     // Filter delivered and undelivered items
     const deliveredItems = combinedData.filter(item => item.status === 'delivered');
@@ -284,7 +301,18 @@ app.get("/get_so_for_di/:soToDi", async (req, res) => {
       deliveredCount: deliveredItems.length,
       undeliveredCount: undeliveredItems.length,
     });
-  } catch (err) {
+  } else {
+    // when no di table
+    return res.status(200).json({
+      message: 'Sales order data retrieved',
+      deliveredItems: [],
+      undeliveredItems: soRows,
+      deliveredCount: 0,
+      undeliveredCount: 0,
+    });
+  }
+}
+  catch (err) {
     console.error('Database query error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
@@ -1094,8 +1122,8 @@ app.post("/send_di_to_db", async (req, res) => {
           deliveredQty INT NOT NULL,
           Packing VARCHAR(50) NOT NULL,
           UnitPrice DECIMAL(10, 2) NOT NULL,
-          tolerance INT NOT NULL,
-          AMD INT NOT NULL
+          tolerance INT,
+          AMD INT
         );
       `;
       await queryPromise(createTableQuery);
@@ -1106,8 +1134,10 @@ app.post("/send_di_to_db", async (req, res) => {
       // Table exists, get the last reference number (id)
       const selectRefQuery = `SELECT diRefNum FROM ${tableName} ORDER BY id DESC LIMIT 1`;
       const result = await queryPromise(selectRefQuery);
-      if(result) {
+      if(result && result[0]) {
         diRefNumber = result[0].diRefNum + 1; // Increment the id to get the next reference number
+      } else {
+        diRefNumber = 1;
       }
     }
 
