@@ -247,7 +247,10 @@ app.get("/get_so_for_di/:soToDi", async (req, res) => {
   const diTableName = generateDiTableName(year);
   const escapedDiTableName = mysql.escapeId(diTableName);
 
-  const diQ = `SELECT * FROM ${escapedDiTableName} WHERE soRefNum = ?;`;
+  const diQ = `SELECT soId, SUM(deliveredQty) AS totalDeliveredQty 
+               FROM ${escapedDiTableName} 
+               WHERE soRefNum = ? 
+               GROUP BY soId;`;
   const soTableName = generateSoTableName(year);
   const escapedSoTableName = mysql.escapeId(soTableName);
 
@@ -256,6 +259,7 @@ app.get("/get_so_for_di/:soToDi", async (req, res) => {
   try {
     let diRows = [];
     try {
+      // Aggregate deliveredQty by soId
       [diRows] = await pool.promise().query(diQ, [soId]);
     } catch (diError) {
       // Handle case where the DI table does not exist
@@ -268,7 +272,8 @@ app.get("/get_so_for_di/:soToDi", async (req, res) => {
 
     let [soRows] = await pool.promise().query(soQ, [soId]);
 
-    if(selectedIds.length > 0) {
+    // Filter sales order rows by selected IDs if provided
+    if (selectedIds.length > 0) {
       soRows = soRows.filter((item) => selectedIds.includes(item.id));
     }
 
@@ -276,19 +281,21 @@ app.get("/get_so_for_di/:soToDi", async (req, res) => {
       return res.status(404).json({ message: "Sales order not found" });
     }
 
-    // Combine sales order data with delivery data
-    if(diRows) {
-      const combinedData = soRows.map(soItem => {
-        const diItem = diRows.find(di => di.soId === soItem.id);
-        const deliveredQty = diItem ? diItem.deliveredQty : 0;
+    // Combine sales order data with aggregated delivery data
+    const deliveryMap = {};
+    diRows.forEach(diItem => {
+      deliveryMap[diItem.soId] = diItem.totalDeliveredQty;
+    });
 
-        return {
-          ...soItem,
-          deliveredQty,
-          status: deliveredQty >= soItem.QTY ? 'delivered' : 'undelivered',
-        };
-      });
-    
+    const combinedData = soRows.map(soItem => {
+      const deliveredQty = deliveryMap[soItem.id] || 0;
+
+      return {
+        ...soItem,
+        deliveredQty,
+        status: deliveredQty >= soItem.QTY ? 'delivered' : 'undelivered',
+      };
+    });
 
     // Filter delivered and undelivered items
     const deliveredItems = combinedData.filter(item => item.status === 'delivered');
@@ -301,22 +308,13 @@ app.get("/get_so_for_di/:soToDi", async (req, res) => {
       deliveredCount: deliveredItems.length,
       undeliveredCount: undeliveredItems.length,
     });
-  } else {
-    // when no di table
-    return res.status(200).json({
-      message: 'Sales order data retrieved',
-      deliveredItems: [],
-      undeliveredItems: soRows,
-      deliveredCount: 0,
-      undeliveredCount: 0,
-    });
-  }
-}
-  catch (err) {
+  } catch (err) {
     console.error('Database query error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 const dataForDi = (filteredData) => {
   
   const diData = filteredData.map(soItem => {

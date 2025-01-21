@@ -135,22 +135,49 @@ function DeliveryInstructionCreate() {
 
   return (
     <div>
-      {deliveredData && (
+      {/* {deliveredData && (
             <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
               <h1>Delivered Data</h1>
               {JSON.stringify(deliveredData, null, 2)}
             </pre>
-          )}
-      {unDeliveredData && (
+          )} */}
+      {/* {unDeliveredData && (
             <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
               <h1>unDelivered Data</h1>
               {JSON.stringify(unDeliveredData, null, 2)}
             </pre>
-          )}
+          )} */}
+
+      { deliveredData.length > 0 && <div>
+        <h2 style={{textAlign: "left" }}>Delivered Items</h2>
+          <table border="1" style={{ width: "50%", textAlign: "left" }}>
+            <thead>
+              <tr>
+                <th>Delivery ID</th>
+                <th>Size</th>
+                <th>Description</th>
+                <th>Ordered Qty</th>
+                <th>Delivered Qty</th>
+              </tr>
+            </thead>
+            <tbody>
+              {deliveredData.map((item) => (
+                <tr key={item.id}  style={{ textAlign: "center" }}>
+                  <td>{item.id}</td>
+                  <td>{item.Size}</td>
+                  <td>{item.itemDescription}</td>
+                  <td>{item.QTY}</td>
+                  <td>{item.deliveredQty}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+      </div>
+      }
 
       {!diSubmitted && <div className='di-on-creation'>
         <div>
-          <h1>This is Create Delivery Instruction for SO {soToDi} and year {year}</h1>
+          {soData.length > 0 &&<h1>This is Create Delivery Instruction for SO {soToDi}</h1>}
           
           {isLoading && <p>Loading...</p>}
           
@@ -179,7 +206,7 @@ function DeliveryInstructionCreate() {
                           <th>Unit</th>
                           <th>Ordered Qty</th>
                           <th>Packing</th>
-                          <th>Actual Length</th>
+                          <th>To Be Delivered</th>
                           <th>Actions</th>
                         </tr>
                   </thead>
@@ -291,7 +318,11 @@ function DeliveryInstructionCreate() {
                                     onChange={(e) => handleChange(e, index, 'deliveredQty')}
                                   />
                                 ) : (
-                                  item.deliveredQty
+                                  (() => {
+                                    const qty = Number(item.QTY) || 0; // Default to 0 if invalid
+                                    const deliveredQty = Number(item.deliveredQty) || 0; // Default to 0 if invalid
+                                    return qty - deliveredQty;
+                                  })()
                                 )}
                               </td>
                               <td className="actions">
