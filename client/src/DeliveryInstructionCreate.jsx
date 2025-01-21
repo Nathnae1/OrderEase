@@ -148,7 +148,7 @@ function DeliveryInstructionCreate() {
             </pre>
           )} */}
 
-      { deliveredData.length > 0 && <div>
+      {deliveredData.length > 0 && <div>
         <h2 style={{textAlign: "left" }}>Delivered Items</h2>
           <table border="1" style={{ width: "50%", textAlign: "left" }}>
             <thead>
