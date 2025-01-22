@@ -214,89 +214,14 @@ function DeliveryInstructionCreate() {
                       {soData.map((item, index) => (
                             <tr key={item.id}>
                               <td className="no">{index + 1}</td>
-                              <td className="size">
-                                {editingIndex === index ? (
-                                  <input
-                                    type="text"
-                                    value={item.Size}
-                                    onChange={(e) => handleChange(e, index, 'Size')}
-                                  />
-                                ) : (
-                                  item.Size
-                                )}
-                              </td>
                               
-                              <td className="description">
-                                {editingIndex === index ? (
-                                  <input
-                                    type="text"
-                                    value={item.itemDescription}
-                                    onChange={(e) => handleChange(e, index, 'itemDescription')}
-                                  />
-                                ) : (
-                                  item.itemDescription
-                                )}
-                              </td>
-
-                              <td className="itemCode">
-                                {editingIndex === index ? (
-                                  <input
-                                    type="text"
-                                    value={item.itemCode}
-                                    onChange={(e) => handleChange(e, index, 'itemCode')}
-                                  />
-                                ) : (
-                                  item.itemCode
-                                )}
-                              </td>
-
-                              <td className="colour">
-                                {editingIndex === index ? (
-                                  <input
-                                    type="text"
-                                    value={item.Colour}
-                                    onChange={(e) => handleChange(e, index, 'Colour')}
-                                  />
-                                ) : (
-                                  item.Colour
-                                )}
-                              </td>
-
-                              <td className="voltage">
-                                {editingIndex === index ? (
-                                  <input
-                                    type="text"
-                                    value={item.Volt}
-                                    onChange={(e) => handleChange(e, index, 'Volt')}
-                                  />
-                                ) : (
-                                  item.Volt
-                                )}
-                              </td>
-                              
-                              <td className="unit">
-                                {editingIndex === index ? (
-                                  <input
-                                    type="text"
-                                    value={item.Unit}
-                                    onChange={(e) => handleChange(e, index, 'Unit')}
-                                  />
-                                ) : (
-                                  item.Unit
-                                )}
-                              </td>
-
-                              <td className="qty">
-                                {editingIndex === index ? (
-                                  <input
-                                    type="number"
-                                    value={item.QTY}
-                                    readOnly
-                                  />
-                                ) : (
-                                  item.QTY
-                                )}
-                              </td>
+                              <td className="size">{item.Size}</td>
+                              <td className="itemDescription">{item.itemDescription}</td>
+                              <td className="itemCode">{item.itemCode}</td>
+                              <td className="colour">{item.Colour}</td>
+                              <td className="voltage">{item.Volt}</td>
+                              <td className="unit">{item.Unit}</td>
+                              <td className="qty">{item.QTY}</td>
 
                               <td className="packing">
                                 {editingIndex === index ? (
