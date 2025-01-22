@@ -44,8 +44,35 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
   // Checking if isPreview to print true
   const [printPreview, setPrintPreview] = useState(false);
 
+  // NEW: Track rows with validation errors
+  const [errorFields, setErrorFields] = useState([]); 
+
+  // Function to validate required fields
+  const validateFields = () => {
+    const errors = fullData.map((row) => {
+      // Check which fields are empty
+      const invalidFields = {};
+      dataKeys.forEach((key) => {
+        if (key !== 'ref' && (!row[key] || row[key].toString().trim() === '')) {
+          invalidFields[key] = true;
+        }
+      });
+      console.log(errorFields);
+      return invalidFields;
+    });
+
+    setErrorFields(errors);
+    return errors.some((fields) => Object.keys(fields).length > 0); // Returns true if any row has errors
+  };
+
    // Function to handle form submission
-   const handleClick = async (e) => {
+  const handleClick = async (e) => {
+
+    // Validate fields before submission
+    if (validateFields()) {
+      alert('Please fill all required fields before submitting.');
+      return;
+    }
 
     try {
       // Check the data before sending to server
@@ -68,6 +95,7 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
         }, 2000);
 
         setFullData([{ ref: '', salesRepId: '', name: '', date: '', billTo: '', size: size, description: '', quantity: '', colour: 'Black', packing: 'DRUM', unitPrice: '', beforeVat: '' }]);
+        setErrorFields([]);
         itemIndex = 0;
 
       } else {
@@ -100,8 +128,8 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
     const newSingleData = [{ ref: '', salesRepId: '', name: '', date: '', billTo: '', size: '', description: '', quantity: '', colour: 'Black', packing: 'DRUM', unitPrice: '', beforeVat: '' }];
 
     setFullData((prevItems) => [...prevItems, ...newSingleData]);
-    console.log(fullData);
-
+    setErrorFields((prevErrors) => [...prevErrors, {}]);
+    
   }
 
   // Table handle cell change
@@ -122,7 +150,13 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
     }
 
     setFullData(updatedData);
-    console.log(fullData);
+    
+    // Clear the error for this field if it has been corrected
+    const updatedErrors = [...errorFields];
+    if (updatedErrors[rowIndex]) {
+      delete updatedErrors[rowIndex][field];
+      setErrorFields(updatedErrors);
+    }
 
   }
 
@@ -195,7 +229,9 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
   // Handle the deletion of a single row
   const handleDeleteRow = (rowIndex) => {
     const newData = fullData.filter((row, index) => index !== rowIndex);
+    const updatedErrors = errorFields.filter((_, index) => index !== rowIndex);
     setFullData(newData);
+    setErrorFields(updatedErrors);
   }
 
   // calculate the total of the items
@@ -265,6 +301,9 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
                           type="text" 
                           value={row[dataKeys[colIndex]]}
                           onChange={(e) => handleCellChange(rowIndex, colIndex, e.target.value)}
+                          className={
+                            errorFields[rowIndex]?.[dataKeys[colIndex]] ? 'error' : ''
+                          }
                         />
                       </td>
                     )
