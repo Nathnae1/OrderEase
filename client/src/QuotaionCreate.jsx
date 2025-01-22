@@ -285,7 +285,9 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
                       <td key={colIndex}>{++itemIndex}</td>
                     ) : colIndex === 5 ? (
                       <td key={colIndex}>
-                          <Suggest currentRowIndex = {rowIndex} onValueChange={handleSizeChange}/>
+                          <Suggest currentRowIndex = {rowIndex} onValueChange={handleSizeChange} className={
+                            errorFields[rowIndex]?.[dataKeys[colIndex]] ? 'error' : ''
+                          }/>
                       </td>
                     ) : colIndex === 1 || colIndex === 2 || colIndex === 3 || colIndex === 4  ? (
                       ''
