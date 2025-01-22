@@ -22,7 +22,7 @@ function DeliveryInstructionCreate() {
 
   const [editingIndex, setEditingIndex] = useState(null); // Track which row is being edited
 
-  const [diRefNumber, setSoRefNumber] = useState(null);
+  const [diRefNumber, setDiRefNumber] = useState(null);
   const [diSubmitted, setDiSubmitted] = useState(false); 
 
   // Define the navigate function
@@ -118,7 +118,7 @@ function DeliveryInstructionCreate() {
       const response = await api.post('/send_di_to_db', dataToSend);
 
       if (response.status === 201) {
-        setSoRefNumber(response.data.diId)
+        setDiRefNumber(response.data.diId)
         setDiSubmitted(true);
       
       } else {
@@ -130,7 +130,9 @@ function DeliveryInstructionCreate() {
   };
 
   const handlePrint = () => {
-    console.log('Pring option clicked');
+    localStorage.setItem('DeliveryInstructionPrint', 'true');
+    const year = new Date().getFullYear();
+    navigate(`/delivery_instruction/print/${diRefNumber}?year=${year}`)
   }
 
   const handleEdit = () => {
@@ -273,7 +275,7 @@ function DeliveryInstructionCreate() {
         <h1>Item Created Successfully!</h1>
         <p>Delivery Instruction ID: {diRefNumber}</p>
         <button onClick={handlePrint}>Print</button>
-        <button onClick={handleEdit}>Edit</button>
+        {/* <button onClick={handleEdit}>Edit</button> */}
       </div>}
 
     </div>
