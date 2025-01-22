@@ -62,7 +62,14 @@ function DeliveryInstructionCreate() {
           console.log(response.data.deliveredItems);
           setDeliveredData(response.data.deliveredItems);
           setunDeliveredData(response.data.undeliveredItems);
-          setSoData(response.data.undeliveredItems);
+
+          // Add `toBeDelivered` to each object in `undeliveredItems`
+          const updatedSoData = response.data.undeliveredItems.map((item) => ({
+            ...item,
+            toBeDelivered: Number(item.QTY) - Number(item.deliveredQty), 
+          }));
+
+          setSoData(updatedSoData);
           // window.alert(`Record exists with DI number: ${response.data.deliveredCount}, ${response.data.deliveryStatus}`);
         } else {
           // Set the fetched quotation data
@@ -87,8 +94,6 @@ function DeliveryInstructionCreate() {
     updatedData[index] = { ...updatedData[index], [field]: value };
 
     // Calculate BeforeVAT if UnitPrice or QTY changes
-    
-
     setSoData(updatedData);
   };
 
@@ -141,12 +146,6 @@ function DeliveryInstructionCreate() {
               {JSON.stringify(deliveredData, null, 2)}
             </pre>
           )} */}
-      {/* {unDeliveredData && (
-            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
-              <h1>unDelivered Data</h1>
-              {JSON.stringify(unDeliveredData, null, 2)}
-            </pre>
-          )} */}
 
       {deliveredData.length > 0 && <div>
         <h2 style={{textAlign: "left" }}>Delivered Items</h2>
@@ -183,11 +182,6 @@ function DeliveryInstructionCreate() {
           
           {error && <p>Error: {error}</p>}
           
-          {/* {!isLoading && !error && (
-            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
-              {JSON.stringify(soData, null, 2)}
-            </pre>
-          )} */}
         </div>
 
         {soData.length > 0 && <div>
@@ -235,19 +229,15 @@ function DeliveryInstructionCreate() {
                                 )}
                               </td>
                               
-                              <td className="final-delivered-qty">
+                              <td className="to-be-delivered">
                                 {editingIndex === index ? (
                                   <input
                                     type="number"
-                                    value={item.deliveredQty}
-                                    onChange={(e) => handleChange(e, index, 'deliveredQty')}
+                                    value={item.toBeDelivered}
+                                    onChange={(e) => handleChange(e, index, 'toBeDelivered')}
                                   />
                                 ) : (
-                                  (() => {
-                                    const qty = Number(item.QTY) || 0; // Default to 0 if invalid
-                                    const deliveredQty = Number(item.deliveredQty) || 0; // Default to 0 if invalid
-                                    return qty - deliveredQty;
-                                  })()
+                                  item.toBeDelivered 
                                 )}
                               </td>
                               <td className="actions">

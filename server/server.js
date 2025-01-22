@@ -1163,7 +1163,7 @@ app.post("/send_di_to_db", async (req, res) => {
       object.Volt,
       object.Unit,
       object.QTY,
-      object.deliveredQty,
+      object.toBeDelivered,
       object.Packing,
       object.UnitPrice,
       object.tolerancePercentage,
