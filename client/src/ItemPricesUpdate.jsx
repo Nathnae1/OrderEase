@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ItemPricesUpdate.css'; // Add styling for the interface
 import api from './api';
+import { updateCachedData } from './useCableData';
 
 const ItemPricesUpdate = () => {
   const [items, setItems] = useState([]);
@@ -39,6 +40,8 @@ const ItemPricesUpdate = () => {
       await api.put(`/api/items/update/price${id}`, {
         price: itemToUpdate.price,
       });
+      // After a successful update, update the cached data
+      updateCachedData(itemToUpdate);
       alert('Price updated successfully!');
     } catch (err) {
       alert('Failed to update price. Please try again.');
@@ -55,6 +58,8 @@ const ItemPricesUpdate = () => {
           })
         )
       );
+      // After updating all prices, update the cached data for all items
+      items.forEach(updateCachedData);
       alert('All prices updated successfully!');
     } catch (err) {
       alert('Failed to update all prices. Please try again.');

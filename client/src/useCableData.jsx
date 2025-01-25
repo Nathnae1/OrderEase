@@ -5,6 +5,16 @@ import api from './api';
 // Act as a shared global variable
 let cachedData = null;
 
+// Function to update cached data
+export const updateCachedData = (updatedItem) => {
+  if (cachedData) {
+    const itemIndex = cachedData.findIndex(item => item.idItems === updatedItem.idItems);
+    if (itemIndex !== -1) {
+      cachedData[itemIndex] = updatedItem;
+    }
+  }
+};
+
 export const useCableData = () => {
   const [itemsDetail, setItemsDetail] = useState(cachedData);
   const [loading, setLoading] = useState(!cachedData);
