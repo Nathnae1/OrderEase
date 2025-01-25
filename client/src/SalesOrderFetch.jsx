@@ -52,11 +52,7 @@ function SalesOrderFetch() {
  
   const handleSoFetch = async () => {
     try {
-      const selectedDate = new Date(soDate);
-      const year = selectedDate.getFullYear();
-      //Setting soYear for delivery Creation
-      setSoYear(year);
-
+      const [year, month] = soDate.split('-'); // Split into year and month 
       const response = await axios.get(`http://localhost:5000/get_sales_order/${soId}?year=${year}`);
       setSoData(response.data)
       

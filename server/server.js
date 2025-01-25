@@ -128,13 +128,31 @@ app.get("/get_quotation_for_so/:qoToSoRef", async (req, res, next) => {
   const soQ = `SELECT * FROM ${escapedSoTableName} WHERE qoRefNum = ?;`;
 
   try {
-    const [soRows] = await pool.promise().query(soQ, [ref]);
-
-    if (soRows.length > 0) {
-      // If a record exists, return the associated SO number
-      const soNum = soRows[0].soRefNum;
-      return res.status(200).json({ message: 'Record exists', soNum });
+    let soRows = [];
+    try {
+      [soRows] = await pool.promise().query(soQ, [ref]);
+      if (soRows.length > 0) {
+        // If a record exists, return the associated SO number
+        const soNum = soRows[0].soRefNum;
+        return res.status(200).json({ message: 'Record exists', soNum });
+      }
+    } catch(err) {
+      if (err.code === 'ER_NO_SUCH_TABLE') {
+        console.warn(`Sales Order table "${soTableName}" does not exist for year: ${year}`);
+        // Proceed with fetching other data since the SO table doesn't exist
+      } else {
+        // If there’s any other error with the query, throw it
+        throw err;
+      }
     }
+
+    // const [soRows] = await pool.promise().query(soQ, [ref]);
+
+    // if (soRows.length > 0) {
+    //   // If a record exists, return the associated SO number
+    //   const soNum = soRows[0].soRefNum;
+    //   return res.status(200).json({ message: 'Record exists', soNum });
+    // }
 
     // If no record exists, proceed to the next operation
     // Continue to the next part of the logic to fetch quotation data
@@ -170,6 +188,10 @@ app.get("/get_quotation_for_so/:qoToSoRef", async (req, res, next) => {
     }
 
   } catch (err) {
+    if (err.code === 'ER_NO_SUCH_TABLE') {
+      console.warn(`Sales Order table "${soTableName}" does not exist for year: ${year}`);
+      return res.status(404).json({ error: `Sales Order table does not exist for year ${year}` });
+    }
     console.error('Database query error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
@@ -206,7 +228,7 @@ const dataForSo = (qoData, itemsData, companyTIN) => {
 app.get("/get_sales_order/:soId", (req, res) => {
   const soId = req.params.soId;
   const year = req.query.year;
-
+  
   // Validate input
   if (!soId || !year) {
     return res.status(400).json({ error: 'Missing required parameters' });

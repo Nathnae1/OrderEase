@@ -77,7 +77,6 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
     try {
       // Check the data before sending to server
       const dataToSend = fullData;
-      console.log('full to db from add', fullData);
       // Use Axios to send a POST request
       const response = await api.post('/create/quotation', dataToSend);
 
@@ -95,6 +94,10 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
         }, 2000);
 
         setFullData([{ ref: '', salesRepId: '', name: '', date: '', billTo: '', size: size, description: '', quantity: '', colour: 'Black', packing: 'DRUM', unitPrice: '', beforeVat: '' }]);
+        setName('');
+        setSize('')
+        setBillTo('');
+        setSalesId('');
         setErrorFields([]);
         itemIndex = 0;
 
@@ -173,14 +176,6 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
     
   }
 
-  const handleSalesInfo = (infoSales) => {
-    if (infoSales) {
-      setName(infoSales.first_name);
-      setSalesId(infoSales.sales_rep_id);
-      console.log('This from Add Disp', infoSales);
-    }
-  }
-
   // Get the data from size input
   const handleSizeChange = (newValue, currentRowIndex)=> {
       setItemData(newValue);
@@ -221,9 +216,34 @@ const dataKeys = ['ref','salesRepId','name', 'date','billTo','size', 'descriptio
 
   };
 
+  // Set the sales info data from drop down
+  const handleSalesInfo = (infoSales) => {
+    if (infoSales) {
+      setName(infoSales.first_name);
+      setSalesId(infoSales.sales_rep_id);
+      
+    // Update the sales info field for every row in fullData
+    //{ ref: '',salesRepId: '', name: '', date: '', billTo: ''
+    setFullData((prevData) =>
+    prevData.map((row) => ({
+      ...row,
+      name: infoSales.first_name,
+      salesRepId: infoSales.sales_rep_id
+      }))
+    );
+    }
+  }
+
   // Get the data form billTo Input
   const handleBillToChange = (newValue) => {
     setBillTo(newValue.company_name);
+    // Update the billTo field for every row in fullData
+    setFullData((prevData) =>
+      prevData.map((row) => ({
+      ...row,
+      billTo: newValue.company_name, // Set the billTo field for each row
+      }))
+    );
   };
 
   // Handle the deletion of a single row
