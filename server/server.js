@@ -14,7 +14,7 @@ const bcrypt = require('bcryptjs')
 
 // for parsing JSON bodies
 const bodyParser = require('body-parser');
-const { error, log } = require('console');
+const { error, log, table } = require('console');
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
@@ -314,7 +314,7 @@ app.get("/get_so_for_di/:soToDi", async (req, res) => {
 
     // Filter delivered and undelivered items
     const deliveredItems = combinedData.filter(item => item.status === 'delivered');
-    const undeliveredItems = combinedData.filter(item => item.status === 'undelivered');
+    const undeliveredItems = dataForDi(combinedData.filter(item => item.status === 'undelivered'));
 
     return res.status(200).json({
       message: 'Sales order data retrieved',
@@ -340,7 +340,6 @@ const dataForDi = (filteredData) => {
       ...remainingFields,
       diDate: new Date(), // Add diDate
       "tolerancePercentage": 5,
-      "deliveredQty": soItem.QTY,
       amd: 0, // Add amd with a fallback value
     };
   });
@@ -627,19 +626,21 @@ app.put("/update_delivery_instruction/:itemId", (req, res) => {
   const year = req.query.year;
 
   const tableName = generateDiTableName(year);
+  console.log("entering edit di for saving", id, year, tableName);
 
   // Escape table name for safety
   const escapedTableName = mysql.escapeId(tableName);
 
   const data = req.body;
 
-  // checking for empty values
+  // checking for empty values // null data exists with tolerance and amd
   for (const [key, value] of Object.entries(data)) {
     if (value === null || value === undefined || value === '') {
       // Return immediately to prevent further execution
       return res.status(400).json({ error: `${key} is required` });
     }
   }
+  console.log("passed empty values check.Values of the data", data);
 
   const q = `UPDATE ${escapedTableName} 
             SET qoId = ?,
