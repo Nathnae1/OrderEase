@@ -756,6 +756,34 @@ app.get("/suggestions/billto",(req, res) => {
   })
 })
 
+// Fetch all companies
+app.get('/companies', (req, res) => {
+  pool.query('SELECT * FROM companies', (err, results) => {
+    if (err) return res.status(500).json(err);
+    return res.json(results);
+  });
+});
+
+// Fetch a single company by ID
+app.get('/company/:id', (req, res) => {
+  const { id } = req.params;
+  pool.query('SELECT * FROM companies WHERE id = ?', [id], (err, result) => {
+    if (err) return res.status(500).json(err);
+    if (result.length === 0) return res.status(404).json({ message: 'Company not found' });
+    return res.json(result[0]);
+  });
+});
+
+// Update company details
+app.put('/company/:id', (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
+  pool.query('UPDATE companies SET ? WHERE id = ?', [updatedData, id], (err) => {
+    if (err) return res.status(500).json(err);
+    return res.json({ message: 'Company updated successfully' });
+  });
+});
+
 // Get Sales info
 app.get("/suggestions/sales/person",(req, res) => {
   const q = "SELECT sales_rep_id, first_name FROM sales_representative";
