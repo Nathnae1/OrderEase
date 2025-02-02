@@ -54,7 +54,8 @@ function SalesOrderFetch() {
     try {
       const [year, month] = soDate.split('-'); // Split into year and month 
       const response = await axios.get(`http://localhost:5000/get_sales_order/${soId}?year=${year}`);
-      setSoData(response.data)
+      setSoData(response.data);
+      setSoYear(year);
       
     } catch (error) {
       console.error('Error fetching data:', error.message);
@@ -95,7 +96,6 @@ function SalesOrderFetch() {
   const handleCreateSelectedDI = (e) => {
     localStorage.setItem('fromSO', 'true');
     const selectedRowsParam = selectedTableRowsID.join(',');
-    console.log(selectedRowsParam);
     if(selectedRowsParam){
       navigate(`/create_di?soToDI=${soId}&year=${soYear}&selectedRowsID=${selectedRowsParam}`); 
     } else {
