@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import api from './api';
 import './SalesOrderFetchStyle.css';
@@ -53,7 +52,7 @@ function SalesOrderFetch() {
   const handleSoFetch = async () => {
     try {
       const [year, month] = soDate.split('-'); // Split into year and month 
-      const response = await axios.get(`http://localhost:5000/get_sales_order/${soId}?year=${year}`);
+      const response = await api.get(`/get_sales_order/${soId}?year=${year}`);
       setSoData(response.data);
       setSoYear(year);
       
@@ -109,7 +108,7 @@ function SalesOrderFetch() {
     const year = itemDate.getFullYear();
 
     try {
-      await axios.delete(`http://localhost:5000/delete_sales_order/${itemId}?year=${year}`);
+      await api.delete(`/delete_sales_order/${itemId}?year=${year}`);
       setSoData(soData.filter(item => item.id !== itemId));
     } catch (error) {
       console.error('Error deleting data:', error.message);
@@ -124,7 +123,7 @@ function SalesOrderFetch() {
     console.log('this is so from react', updatedRow);
     
     try {
-      await axios.put(`http://localhost:5000/update_sales_order/${itemId}?year=${year}`, updatedRow);
+      await api.put(`/update_sales_order/${itemId}?year=${year}`, updatedRow);
       setEditingIndex(null);
     } catch (error) {
       console.error('Error saving data:', error.message);

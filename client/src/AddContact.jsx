@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './AddContact.css';  // Import the specific CSS file for styling
-import axios from "axios";
+import api from './api';
 
 const AddContact = () => {
   const [formData, setFormData] = useState({
@@ -31,7 +31,7 @@ const AddContact = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/api/add_contact', formData);
+      const response = await api.post('/api/add_contact', formData);
 
       if (response.status === 201) {
         alert('Contact added successfully!');
