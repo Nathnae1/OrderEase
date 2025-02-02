@@ -163,7 +163,9 @@ function SalesOrderCreate() {
   };
 
   const handlePrint = () => {
-    console.log('Print option clicked');
+    localStorage.setItem('SalesOrderPrint', 'true');
+    const year = new Date().getFullYear();
+    navigate(`/sales_order/print/${soRefNumber}?year=${year}`)
   }
 
   const handleEdit = () => {
@@ -372,7 +374,7 @@ function SalesOrderCreate() {
         <h1>Item Created Successfully!</h1>
         <p>Sales Order ID: {soRefNumber}</p>
         <button onClick={handlePrint}>Print</button>
-        <button onClick={handleEdit}>Edit</button>
+        {/* <button onClick={handleEdit}>Edit</button> */}
       </div>}
     </div>
   );

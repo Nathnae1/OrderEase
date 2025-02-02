@@ -125,12 +125,13 @@ app.get("/get_quotation_for_so/:qoToSoRef", async (req, res, next) => {
   // Checking SO table
   const soTableName = generateSoTableName(year);
   const escapedSoTableName = mysql.escapeId(soTableName);
-  const soQ = `SELECT * FROM ${escapedSoTableName} WHERE qoRefNum = ?;`;
+  const soQ = `SELECT * FROM ${escapedSoTableName} WHERE qoRefNum = ? AND MONTH(qoDate) = ?;`;
+
 
   try {
     let soRows = [];
     try {
-      [soRows] = await pool.promise().query(soQ, [ref]);
+      [soRows] = await pool.promise().query(soQ, [ref, month]);
       if (soRows.length > 0) {
         // If a record exists, return the associated SO number
         const soNum = soRows[0].soRefNum;
@@ -145,14 +146,6 @@ app.get("/get_quotation_for_so/:qoToSoRef", async (req, res, next) => {
         throw err;
       }
     }
-
-    // const [soRows] = await pool.promise().query(soQ, [ref]);
-
-    // if (soRows.length > 0) {
-    //   // If a record exists, return the associated SO number
-    //   const soNum = soRows[0].soRefNum;
-    //   return res.status(200).json({ message: 'Record exists', soNum });
-    // }
 
     // If no record exists, proceed to the next operation
     // Continue to the next part of the logic to fetch quotation data

@@ -135,8 +135,6 @@ function SalesOrderFetch() {
     localStorage.setItem('SalesOrderPrint', 'true');
     const selectedDate = new Date(soDate);
     const year = selectedDate.getFullYear();
-    
-
     navigate(`/sales_order/print/${soId}?year=${year}`)
   }
 
