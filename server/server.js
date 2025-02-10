@@ -784,6 +784,18 @@ app.put('/company/:id', (req, res) => {
 });
 
 // Get Sales info
+app.get("/sales/persons",(req, res) => {
+  const q = "SELECT * FROM sales_representative";
+  pool.query(q, (err, data) => {
+    if(err) {
+      console.error('Query error:', err);
+      return res.status(500).json({error: 'Query error' });
+    }
+    return res.json(data);
+  })
+})
+
+// Get Sales info
 app.get("/suggestions/sales/person",(req, res) => {
   const q = "SELECT sales_rep_id, first_name FROM sales_representative";
   pool.query(q, (err, data) => {
