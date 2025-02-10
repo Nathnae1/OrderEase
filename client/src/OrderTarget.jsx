@@ -1,5 +1,5 @@
 
-function Home() {
+function OrderTarget() {
   return (
     <>
       <div>
@@ -9,4 +9,4 @@ function Home() {
   );
 }
 
-export default Home
+export default OrderTarget

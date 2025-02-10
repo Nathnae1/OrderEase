@@ -15,7 +15,6 @@ const bcrypt = require('bcryptjs')
 // for parsing JSON bodies
 const bodyParser = require('body-parser');
 const { error, log, table } = require('console');
-const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 

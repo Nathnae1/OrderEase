@@ -12,12 +12,6 @@ const NavigationBar = () => {
       {isAuthenticated ? (
         <>
           <NavLink
-            to="/home"
-            className={({ isActive }) => (isActive ? 'active-link' : '')}
-          >
-            Home
-          </NavLink>
-          <NavLink
             to="/dashboard"
             className={({ isActive }) => (isActive ? 'active-link' : '')}
           >
@@ -46,6 +40,13 @@ const NavigationBar = () => {
             className={({ isActive }) => (isActive ? 'active-link' : '')}
           >
             Fetch Delivery
+          </NavLink>
+
+          <NavLink
+            to="/order_target"
+            className={({ isActive }) => (isActive ? 'active-link' : '')}
+          >
+            Order Target
           </NavLink>
 
           {/* Dropdown for Contacts */}
