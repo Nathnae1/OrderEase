@@ -1,66 +1,131 @@
+/* General Styles */
 .sales-target-container {
-    max-width: 600px;
-    margin: 10px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+/* Navigation Tabs */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.top-nav button {
+  flex: 1;
+  padding: 10px;
+  background: #f4f4f4;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.top-nav button:hover {
+  background: #e0e0e0;
+}
+
+.top-nav .active {
+  background: #007bff;
+  color: white;
+}
+
+/* Form Section */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-select,
+.form-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.form-input:disabled {
+  background: #f4f4f4;
+  color: #888;
+}
+
+/* Target Display */
+.old-targets {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 5px;
+  border-left: 4px solid #007bff;
+}
+
+.old-targets h3 {
+  margin-bottom: 10px;
+  color: #007bff;
+}
+
+.old-targets p {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+/* Loading & No Data */
+.loading-text {
+  text-align: center;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.no-data {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+/* Form Container */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+/* Submit Button */
+.submit-button,
+.fetch-button {
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: #28a745;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover,
+.fetch-button:hover {
+  background: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .sales-target-container {
+    width: 90%;
   }
-  
-  h2, h3 {
-    text-align: center;
-    color: #333;
-  }
-  
-  .form-label {
-    font-weight: bold;
-    margin-top: 10px;
-    display: block;
-  }
-  
-  .form-select, .form-input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-  
-  .form-input:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-  
-  .old-targets {
-    background-color: #f1f1f1;
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 10px;
-  }
-  
-  .loading-text {
-    text-align: center;
-    color: #ff6600;
-    font-weight: bold;
-  }
-  
-  .submit-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
-    display: block;
-    width: 100%;
-  }
-  
-  .submit-button:hover {
-    background-color: #0056b3;
-  }
-  
+}
