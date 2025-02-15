@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './ItemPricesUpdate.css'; // Add styling for the interface
 import api from './api';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { updateCachedData } from './useCableData';
 
 const ItemPricesUpdate = () => {
@@ -44,9 +46,9 @@ const ItemPricesUpdate = () => {
       });
       // After a successful update, update the cached data
       updateCachedData(itemToUpdate);
-      alert('Price updated successfully!');
+      toast.success('Price updated successfully!');
     } catch (err) {
-      alert('Failed to update price. Please try again.');
+      toast.error('Failed to update price. Please try again.');
     }
   };
 
@@ -62,9 +64,9 @@ const ItemPricesUpdate = () => {
       );
       // After updating all prices, update the cached data for all items
       items.forEach(updateCachedData);
-      alert('All prices updated successfully!');
+      toast.success('All prices updated successfully!');
     } catch (err) {
-      alert('Failed to update all prices. Please try again.');
+      toast.error('Failed to update all prices. Please try again.');
     }
   };
 
@@ -90,6 +92,7 @@ const ItemPricesUpdate = () => {
 
   return (
     <div className="update-prices-container">
+      <ToastContainer />
       <h1>Update Item Prices</h1>
       <table className="update-prices-table">
         <thead>

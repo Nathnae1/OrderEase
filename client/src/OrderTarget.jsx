@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./OrderTarget.css";
 
 const OrderTarget = () => {
@@ -97,7 +99,7 @@ const OrderTarget = () => {
 
   const handleSubmit = async () => {
     if (!selectedSalesperson) {
-      alert("Please select a salesperson first!");
+      toast.error("Please select a salesperson first!");
       return;
     }
     try {
@@ -106,14 +108,15 @@ const OrderTarget = () => {
         year: currentYear,
         targets: newTargets,
       });
-      alert("Sales targets updated successfully!");
+      toast.success("Sales targets updated successfully!");
     } catch (error) {
-      alert("Failed to update sales targets. Please try again.");
+      toast.error("Failed to update sales targets. Please try again.");
     }
   };
 
   return (
     <div className="sales-target-container">
+      <ToastContainer />
       {/* Navigation Tabs */}
       <div className="top-nav">
         <button className={viewMode === "new" ? "active" : ""} onClick={() => setViewMode("new")}>
