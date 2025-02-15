@@ -7,6 +7,8 @@ const ItemPricesUpdate = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Number of items per page
 
   // Fetch items from the server
   useEffect(() => {
@@ -66,6 +68,23 @@ const ItemPricesUpdate = () => {
     }
   };
 
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+
+  // Generate page numbers
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  // Handle page change
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
@@ -84,7 +103,7 @@ const ItemPricesUpdate = () => {
           </tr>
         </thead>
         <tbody>
-          {items.map((item) => (
+          {currentItems.map((item) => (
             <tr key={item.idItems}>
               <td>{item.size}</td>
               <td>{item.itemDescription}</td>
@@ -106,6 +125,32 @@ const ItemPricesUpdate = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Pagination controls */}
+      <div className="pagination">
+        <button
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        {pageNumbers.map((number) => (
+          <button
+            key={number}
+            onClick={() => paginate(number)}
+            className={currentPage === number ? 'active' : ''}
+          >
+            {number}
+          </button>
+        ))}
+        <button
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
+
       <button className="save-all-button" onClick={handleSaveAll}>
         Save All
       </button>
