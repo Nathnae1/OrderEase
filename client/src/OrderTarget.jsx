@@ -201,9 +201,12 @@ const OrderTarget = () => {
             </div>
           ))}
 
-          <button type="button" onClick={handleSubmit} className="submit-button">
-            Save Targets
-          </button>
+          <div>
+            <button type="button" onClick={handleSubmit} className="submit-button">
+              Save Targets
+            </button>
+          </div>
+          
         </form>
       )}
     </div>
