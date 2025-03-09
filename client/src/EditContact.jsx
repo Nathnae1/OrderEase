@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import api from './api';
 import './EditContactStyles.css';
 
 function EditContact() {
@@ -13,7 +14,7 @@ function EditContact() {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/companies');
+        const response = await api.get('/companies');
         setCompanies(response.data);
       } catch (error) {
         console.error('Error fetching companies:', error);
@@ -30,7 +31,7 @@ function EditContact() {
     setLoading(true);
 
     try {
-      const response = await axios.get(`http://localhost:5000/company/${companyId}`);
+      const response = await api.get(`/company/${companyId}`);
       setCompanyData(response.data);
     } catch (error) {
       console.error('Error fetching company details:', error);
@@ -47,7 +48,7 @@ function EditContact() {
   // Submit updated data
   const handleSubmit = async () => {
     try {
-      await axios.put(`http://localhost:5000/company/${selectedCompanyId}`, companyData);
+      await api.put(`/company/${selectedCompanyId}`, companyData);
       alert('Company details updated successfully!');
     } catch (error) {
       alert('Failed to update company. Please try again.');

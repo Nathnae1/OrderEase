@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import api from "./api";
 import "react-toastify/dist/ReactToastify.css";
 import "./OrderTarget.css";
 
@@ -18,7 +18,7 @@ const OrderTarget = () => {
   useEffect(() => {
     const fetchSalespersons = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/sales/persons");
+        const response = await api.get("/sales/persons");
         setSalespersons(response.data);
       } catch (error) {
         console.error("Error fetching salespersons:", error);
@@ -49,8 +49,8 @@ const OrderTarget = () => {
     setNoData(false);
 
     try {
-      const response = await axios.get(
-        `http://localhost:5000/sales-target/${selectedSalesperson}?year=${currentYear}`
+      const response = await api.get(
+        `/sales-target/${selectedSalesperson}?year=${currentYear}`
       );
 
       if (response.data && Object.keys(response.data).length > 0) {
@@ -74,8 +74,8 @@ const OrderTarget = () => {
     setNoData(false);
 
     try {
-      const response = await axios.get(
-        `http://localhost:5000/sales-target/${selectedSalesperson}?year=${year}`
+      const response = await api.get(
+        `/sales-target/${selectedSalesperson}?year=${year}`
       );
 
       if (response.data && Object.keys(response.data).length > 0) {
@@ -103,7 +103,7 @@ const OrderTarget = () => {
       return;
     }
     try {
-      await axios.post(`http://localhost:5000/sales-target`, {
+      await api.post(`/sales-target`, {
         salespersonId: selectedSalesperson,
         year: currentYear,
         targets: newTargets,
@@ -119,7 +119,10 @@ const OrderTarget = () => {
       <ToastContainer />
       {/* Navigation Tabs */}
       <div className="top-nav">
-        <button className={viewMode === "new" ? "active" : ""} onClick={() => setViewMode("new")}>
+        <button
+          className={viewMode === "new" ? "active" : ""}
+          onClick={() => setViewMode("new")}
+        >
           New Targets
         </button>
         <button
